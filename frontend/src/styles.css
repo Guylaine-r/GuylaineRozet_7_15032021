@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: gray;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
