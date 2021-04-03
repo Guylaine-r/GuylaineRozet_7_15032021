@@ -3,4 +3,4 @@
 - [X] Formulaire de connexion non fonctionnel
 - [X] Page avec liste des derniers postes
 - [X] Page de poste avec commentaires et possibilité d'ajouter des commentaires non fonctionnelle
-- [ ] Formulaire de publication de poste non fonctionnel
+- [X] Formulaire de publication de poste non fonctionnel
