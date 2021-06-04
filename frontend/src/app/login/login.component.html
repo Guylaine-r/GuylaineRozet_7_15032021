@@ -1,15 +1,33 @@
-<h2 class="mb-3">Connexion</h2>
 
-<div class="input-group mb-3">
-    <span class="input-group-text" id="email-addon">e-mail</span>
-    <input type="email" class="form-control" placeholder="john@doe.com" aria-label="e-mail" aria-describedby="email-addon" [(ngModel)]="email">
+<div class="m-auto loading" *ngIf="loading">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
 </div>
 
-<div class="input-group mb-3">
-    <span class="input-group-text" id="password-addon">Mot de passe</span>
-    <input type="password" class="form-control" placeholder="********" aria-label="Mot de passe" aria-describedby="password-addon">
-</div>
+<div id="login">
+    <h2 class="mb-3">Connexion</h2>
 
-<div class="d-flex flex-row justify-content-end">
-    <button type="button" class="btn btn-primary" (click)="openPopup()">Envoyer</button>
+    <form [formGroup]="loginForm">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="email">e-mail</label>
+            <input type="email" class="form-control" placeholder="john@doe.com" aria-label="e-mail"
+                formControlName="email" aria-describedby="email-addon" [(ngModel)]="email">
+        </div>
+
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="password">Mot de passe</label>
+            <input type="password" class="form-control" placeholder="******" aria-label="Mot de passe"
+                formControlName="password" aria-describedby="password-addon" [(ngModel)]="password">
+        </div>
+
+        <div class="d-flex flex-row justify-content-end">
+            <button type="button" class="btn btn-primary" (click)="submit()">Envoyer</button>
+        </div>
+
+        <div class="alert alert-danger mt-4" role="alert" id="message-alert" *ngIf="errorMessage!=null">
+            {{errorMessage}}
+        </div>
+    </form>
+
 </div>

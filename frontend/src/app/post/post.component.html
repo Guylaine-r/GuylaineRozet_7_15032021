@@ -1,4 +1,6 @@
-<a href="#" class="post-link"><h3>{{post.title}}</h3></a>
+<a href="/{{post.id}}" class="post-link">
+    <h3>{{post.title}}</h3>
+</a>
 
 <div class="text-center">
     <img src="{{post.img}}" class="mw-100 mx-auto">
@@ -7,16 +9,21 @@
 
 <p class="mt-2">
     {{post.text}}
-</p>
+</p> 
 
 <h4>Commentaires</h4>
 
-<div class="form-floating my-4">
-    <textarea class="form-control" placeholder="Laissez un commentaire" id="floatingTextarea" style="height: 128px;" [(ngModel)]="comment"></textarea>
+<div class="form-floating my-4" *ngIf="user.isConnected()">
+    <textarea class="form-control" placeholder="Laissez un commentaire" id="floatingTextarea" style="height: 128px;"
+        [(ngModel)]="comment"></textarea>
     <label for="floatingTextarea">Votre commentaire</label>
     <div class="d-flex flex-row justify-content-end mt-2">
         <button type="button" class="btn btn-primary" (click)="sendComment()">Envoyer</button>
     </div>
+</div>
+
+<div class="alert alert-secondary my-4" role="alert" *ngIf="!user.isConnected()">
+    Veuillez vous connecter pour ajouter un commentaire.
 </div>
 
 <div *ngFor="let comment of post.comments" class="d-flex flex-column">

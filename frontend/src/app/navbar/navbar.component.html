@@ -6,14 +6,20 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!user.isConnected()">
           <a class="nav-link" routerLink="login">Connexion</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!user.isConnected()">
           <a class="nav-link" routerLink="signup">Inscription</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="user.isConnected()">
           <a class="nav-link" routerLink="publish">Nouveau post</a>
+        </li>
+        <li class="nav-item" *ngIf="user.isConnected()" (click)="user.disconnect()">
+          <a class="nav-link" routerLink="/">Déconnexion</a>
+        </li>
+        <li class="nav-item" *ngIf="user.isConnected()">
+          <a class="nav-link" routerLink="/profile">Profil</a>
         </li>
       </ul>
     </div>

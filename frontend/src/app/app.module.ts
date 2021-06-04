@@ -10,6 +10,9 @@ import { LoginComponent } from './login/login.component';
 import { ListingComponent } from './listing/listing.component';
 import { PostComponent } from './post/post.component';
 import { PublishComponent } from './publish/publish.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ProfileComponent } from './profile/profile.component';
+
 
 @NgModule({
   declarations: [
@@ -19,12 +22,15 @@ import { PublishComponent } from './publish/publish.component';
     LoginComponent,
     ListingComponent,
     PostComponent,
-    PublishComponent
+    PublishComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

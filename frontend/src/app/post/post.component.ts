@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-post',
@@ -12,7 +13,7 @@ export class PostComponent implements OnInit {
   post : any;
   comment : any;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, public user: UserService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
