@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, ObservableInput } from 'rxjs';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class BackendService {
       text: text,
       data: data
     };
-    return this.http.post<any>(this.BACKEND_URL + 'addPost', body, this.createOptions());
+    return this.http.post<any>(this.BACKEND_URL + 'posts', body, this.createOptions());
   }
 
   // Récupérer tous les posts
@@ -60,6 +60,10 @@ export class BackendService {
 
   isModerator(): Observable<any> {
     return this.http.get<any>(this.BACKEND_URL + "users/" + this.user.getId() + "/moderator", this.createOptions());
+  }
+
+  addComment(text, post): Observable<any> {
+    return this.http.post<any>(this.BACKEND_URL + "posts/" + post + "/comments", {text: text}, this.createOptions());
   }
 
   deletePost(id): Observable<any> {

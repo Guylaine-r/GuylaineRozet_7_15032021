@@ -12,7 +12,7 @@ export class PostComponent implements OnInit {
 
   postId : any;
   post : any;
-  comment : any;
+  commentText : any;
   comments : any;
   moderator : boolean = false;
 
@@ -35,7 +35,10 @@ export class PostComponent implements OnInit {
   }
 
   sendComment(): void {
-    window.alert(this.comment);
+    this.backend.addComment(this.commentText, this.postId).subscribe(results => {
+      window.alert("Commentaire ajouté avec succès!");
+      this.ngOnInit();
+    });
   }
 
   deleteComment(id) {

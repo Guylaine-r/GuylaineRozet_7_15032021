@@ -18,7 +18,7 @@
     
     <div class="form-floating my-4" *ngIf="user.isConnected()">
         <textarea class="form-control" placeholder="Laissez un commentaire" id="floatingTextarea" style="height: 128px;"
-            [(ngModel)]="comment"></textarea>
+            [(ngModel)]="commentText"></textarea>
         <label for="floatingTextarea">Votre commentaire</label>
         <div class="d-flex flex-row justify-content-end mt-2">
             <button type="button" class="btn btn-primary" (click)="sendComment()">Envoyer</button>

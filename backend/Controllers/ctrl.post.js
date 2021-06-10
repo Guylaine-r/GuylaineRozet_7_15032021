@@ -1,8 +1,5 @@
-const { UV_FS_O_FILEMAP } = require("constants");
 const db = require("../db");
 const fs = require("fs");
-const { query } = require("../db");
-const { response } = require("express");
 
 exports.getAllPosts = (request, response) => {
     db.query("SELECT * FROM post", function (error, results) {
@@ -62,6 +59,22 @@ exports.createPost = (request, response) => {
     });
 }
 
+exports.addComment = (request, response) => {
+    let post = request.params.id;
+    let user = request.userId;
+    let text = request.body.text;
+
+    db.query("INSERT INTO comment(text, author, post) VALUES(?, ?, ?)", [text, user, post], (error, results) => {
+        if(error) {
+            response.statusCode = 500;
+            response.send(error);
+            return;
+        }
+        response.statusCode = 200;
+        response.send({message: "OK"});
+    });
+}
+
 exports.deletePost = (request, response) => {
     let id = request.params.id;
     db.query("DELETE FROM post WHERE id=?", [id], (error, results, fields) => {
@@ -70,8 +83,16 @@ exports.deletePost = (request, response) => {
             response.send(error);
             return;
         }
-        response.statusCode = 200;
-        response.send({message: "OK"});
+        db.query("DELETE FROM comment WHERE post=?", [id], (error, results, fields) => {
+            if(error) {
+                response.statusCode = 500;
+                response.send(error);
+                return;
+            }
+            fs.rmSync("./images/" + id + ".png");
+            response.statusCode = 200;
+            response.send({message: "OK"});
+        });
     });
 }
 
