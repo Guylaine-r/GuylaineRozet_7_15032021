@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
   }
 
   deleteAccount(): void {
-    this.backend.deleteAccount(this.user.getToken()).subscribe(results => {
+    this.backend.deleteAccount().subscribe(results => {
       document.getElementsByClassName("modal-backdrop")[0].remove();
       this.user.disconnect();
       this.router.navigate(["/"]);

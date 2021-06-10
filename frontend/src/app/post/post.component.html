@@ -1,32 +1,37 @@
-<a href="/{{post.id}}" class="post-link">
-    <h3>{{post.title}}</h3>
-</a>
+<div *ngIf="post != undefined">
+    <button type="button" class="btn btn-danger" style="width: min-content" *ngIf="moderator" (click)="deletePost()">Supprimer</button>
 
-<div class="text-center">
-    <img src="{{post.img}}" class="mw-100 mx-auto">
-</div>
-
-
-<p class="mt-2">
-    {{post.text}}
-</p> 
-
-<h4>Commentaires</h4>
-
-<div class="form-floating my-4" *ngIf="user.isConnected()">
-    <textarea class="form-control" placeholder="Laissez un commentaire" id="floatingTextarea" style="height: 128px;"
-        [(ngModel)]="comment"></textarea>
-    <label for="floatingTextarea">Votre commentaire</label>
-    <div class="d-flex flex-row justify-content-end mt-2">
-        <button type="button" class="btn btn-primary" (click)="sendComment()">Envoyer</button>
+    <a href="/{{post.id}}" class="post-link">
+        <h3>{{post.title}}</h3>
+    </a>
+    <h5>de {{post.firstname}} {{post.lastname}}</h5>
+    
+    <div class="text-center">
+        <img src="{{backend.BACKEND_URL}}images/{{post.id}}.png" class="mw-100 mx-auto">
     </div>
-</div>
-
-<div class="alert alert-secondary my-4" role="alert" *ngIf="!user.isConnected()">
-    Veuillez vous connecter pour ajouter un commentaire.
-</div>
-
-<div *ngFor="let comment of post.comments" class="d-flex flex-column">
-    <span class="fs-4 text border border-bottom-0 px-2" style="width: fit-content;">{{comment.author}}</span>
-    <p class="border p-2">{{comment.text}}</p>
+    
+    <p class="mt-2">
+        {{post.text}}
+    </p> 
+    
+    <h4>Commentaires</h4>
+    
+    <div class="form-floating my-4" *ngIf="user.isConnected()">
+        <textarea class="form-control" placeholder="Laissez un commentaire" id="floatingTextarea" style="height: 128px;"
+            [(ngModel)]="comment"></textarea>
+        <label for="floatingTextarea">Votre commentaire</label>
+        <div class="d-flex flex-row justify-content-end mt-2">
+            <button type="button" class="btn btn-primary" (click)="sendComment()">Envoyer</button>
+        </div>
+    </div>
+    
+    <div class="alert alert-secondary my-4" role="alert" *ngIf="!user.isConnected()">
+        Veuillez vous connecter pour ajouter un commentaire.
+    </div>
+    
+    <div *ngFor="let comment of comments" class="d-flex flex-column">
+        <button type="button" class="btn btn-danger" style="width: min-content" *ngIf="moderator" (click)="deleteComment(comment.id)">Supprimer</button>
+        <span class="fs-4 text border border-bottom-0 px-2" style="width: fit-content;">{{comment.firstname}} {{comment.lastname}}</span>
+        <p class="border p-2">{{comment.text}}</p>
+    </div>
 </div>

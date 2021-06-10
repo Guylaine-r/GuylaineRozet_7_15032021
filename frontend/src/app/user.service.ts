@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BackendService } from './backend.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +13,20 @@ export class UserService {
     localStorage.setItem("token", token);
   }
 
-  //Obtenir le token
+  setId(id) {
+    localStorage.setItem("id", id);
+  }
+
+  // Obtenir le token
   getToken() {
     return localStorage.getItem("token");
   }
 
-  // Etre connecter 
+  getId() {
+    return localStorage.getItem("id");
+  }
+
+  // Être connecté 
   isConnected() : boolean {
     return this.getToken() != undefined;
   }
@@ -25,5 +34,6 @@ export class UserService {
   // Déconnecter
   disconnect() {
     localStorage.removeItem("token");
+    localStorage.removeItem("id");
   }
 }

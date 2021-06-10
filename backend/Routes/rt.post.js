@@ -4,6 +4,11 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
-router.post("/addPost", multer, ctrlPost.createPost);
+router.get("/posts/:id", ctrlPost.getPost);
+router.get("/posts/:id/comments", ctrlPost.getPostComments);
+router.get("/posts", ctrlPost.getAllPosts);
+router.post("/addPost", auth.userCheck, ctrlPost.createPost);
+router.delete("/posts/:id", auth.userCheck, auth.moderatorCheck, ctrlPost.deletePost)
+router.delete("/comments/:id", auth.userCheck, auth.moderatorCheck, ctrlPost.deleteComment);
 
 module.exports = router;

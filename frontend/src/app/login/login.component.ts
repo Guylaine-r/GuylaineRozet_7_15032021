@@ -38,6 +38,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.backend.login(this.email, this.password).subscribe((value) => {
         this.user.setToken(value.token);
+        this.user.setId(value.id);
         this.loading = false;
         this.router.navigate(["/"]);
       },

@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private user: UserService) { }
 
-  //Inscription
+  // Inscription
   signup(lastname, firstname, email, password): Observable<any> {
     return this.http.post<any>(this.BACKEND_URL + 'signup', {
       lastname: lastname,
@@ -28,22 +29,56 @@ export class BackendService {
     });
   };
 
-  //Supprimer un compte
-  deleteAccount(token): Observable<any> {
-    return this.http.post<any>(this.BACKEND_URL + 'deleteAccount', {
-      token: token
-    });
+  // Supprimer un compte
+  deleteAccount(): Observable<any> {
+    return this.http.post<any>(this.BACKEND_URL + 'deleteAccount', {}, this.createOptions());
   };
 
-  //Ajouter un post
-  addPost(token, title, text, file: Blob) : Observable<any> {
-    let formData = new FormData();
-    formData.append("token", token);
-    formData.append("title", title);
-    formData.append("text", text);
-    formData.append("file", file, "myfile.png");
-    return this.http.post<any>(this.BACKEND_URL + 'addPost', formData);
+  // Créer un post
+  createPost(title, text, data): Observable<any> {
+    let body = {
+      title: title,
+      text: text,
+      data: data
+    };
+    return this.http.post<any>(this.BACKEND_URL + 'addPost', body, this.createOptions());
   }
 
-  BACKEND_URL = "http://localhost:3000/";
+  // Récupérer tous les posts
+  getAllPosts(): Observable<any> {
+    return this.http.get<any>(this.BACKEND_URL + "posts");
+  }
+
+  // Récupérer les informations d'un post
+  getPost(id): Observable<any> {
+    return this.http.get<any>(this.BACKEND_URL + "posts/" + id);
+  }
+
+  getPostComments(id): Observable<any> {
+    return this.http.get<any>(this.BACKEND_URL + "posts/" + id + "/comments");
+  }
+
+  isModerator(): Observable<any> {
+    return this.http.get<any>(this.BACKEND_URL + "users/" + this.user.getId() + "/moderator", this.createOptions());
+  }
+
+  deletePost(id): Observable<any> {
+    return this.http.delete<any>(this.BACKEND_URL + "posts/" + id, this.createOptions());
+  }
+
+  deleteComment(id): Observable<any> {
+    return this.http.delete<any>(this.BACKEND_URL + "comments/" + id, this.createOptions());
+  }
+
+  createOptions() {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: this.user.getToken()
+      })
+    };
+    return httpOptions;
+  }
+
+  public BACKEND_URL = "http://localhost:3000/";
 }

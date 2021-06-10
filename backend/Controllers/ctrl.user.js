@@ -16,7 +16,7 @@ exports.signup = (request, response) => {
     + l'execution de la fnt est long et + le hachage sera sécurisé*/
     let password = bcrypt.hashSync(request.body.password, ENVIRONMENT.SALT);
 
-    db.query("SELECT id FROM users WHERE email=?", [email], (error, results) => {
+    db.query("SELECT id FROM user WHERE email=?", [email], (error, results) => {
         console.log(error);
         if(results[0]) {
             response.statusCode = 403;
@@ -24,7 +24,7 @@ exports.signup = (request, response) => {
             return;
         }
 
-        db.query("INSERT INTO users(lastname, firstname, email, password) VALUES(?, ?, ?, ?)", [lastname, firstname, email, password], (error) => {
+        db.query("INSERT INTO user(lastname, firstname, email, password) VALUES(?, ?, ?, ?)", [lastname, firstname, email, password], (error) => {
             if(error) {
                 response.send(error);
             } else {
@@ -41,7 +41,7 @@ exports.login = (request, response) => {
     let email = request.body.email;
     let password = request.body.password;
 
-    db.query("SELECT id, password FROM users WHERE email=?", [email], (error, results, fields) => {
+    db.query("SELECT id, password FROM user WHERE email=?", [email], (error, results, fields) => {
         if(error) {
             response.statusCode = 403;
             response.send(error);
@@ -59,7 +59,7 @@ exports.login = (request, response) => {
                 id: results[0].id
             };
             let token = jwt.sign(payload, 'shhhhh');
-            response.send({token: token});
+            response.send({token: token, id: results[0].id});
         } else {
             response.statusCode = 403;
             response.send({message: "MAUVAIS MOT DE PASSE ! "});
@@ -69,22 +69,31 @@ exports.login = (request, response) => {
 };
 
 exports.deleteAccount = (request, response) => {
-    let token = request.body.token;
-
-    jwt.verify(token, 'shhhhh', function(error, decoded) {
+    let id = request.userId;
+    db.query("DELETE FROM user WHERE id = ?", [id], (error, results, fields) => {
         if(error) {
-            response.statusCode = 403;
+            response.statusCode = 500;
             response.send({message: error});
             return;
         }
-
-        db.query("DELETE FROM users WHERE id = ?", [decoded.id], (error, results, fields) => {
-            if(error) {
-                response.statusCode = 500;
-                response.send({message: error});
-                return;
-            }
-            response.send({message: "GOOD"});
-        });
+        response.send({message: "GOOD"});
     });
 };
+
+exports.isModerator = (request, response) => {
+    let id = request.userId;
+    let targetUser = request.params.id;
+    if(id != targetUser) {
+        response.statusSend(403);
+        return;
+    }
+    db.query("SELECT moderator FROM user WHERE id=?", [id], (error, results, fields) => {
+        if(error) {
+            response.statusCode = 500;
+            response.send(error);
+            return;
+        }
+        response.statusCode = 200;
+        response.send({isModerator: results[0].moderator});
+    });
+}

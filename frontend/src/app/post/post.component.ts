@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackendService } from '../backend.service';
 import { UserService } from '../user.service';
 
 @Component({
@@ -12,43 +13,44 @@ export class PostComponent implements OnInit {
   postId : any;
   post : any;
   comment : any;
+  comments : any;
+  moderator : boolean = false;
 
-  constructor(private route: ActivatedRoute, public user: UserService) { }
+  constructor(private route: ActivatedRoute, private router: Router, public user: UserService, public backend: BackendService) { }
 
   ngOnInit(): void {
+    this.comments = [];
     this.route.params.subscribe(params => {
-      this.postId = params.post_id;
-      this.loadPost();
+      this.postId = params.postId;
+      this.backend.getPost(this.postId).subscribe(post => {
+        this.post = post;
+      });
+      this.backend.getPostComments(this.postId).subscribe(comments => {
+        this.comments = comments;
+      })
+      this.backend.isModerator().subscribe(results => {
+        this.moderator = results.isModerator;
+      });
     });
-  }
-
-  loadPost(): void {
-    const LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam nisl odio, tincidunt id imperdiet sit amet, ultricies quis metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam blandit aliquet viverra. Aliquam ultrices tellus ut nunc rutrum ultricies. Fusce feugiat hendrerit risus, a lacinia lorem laoreet volutpat. Donec et porttitor justo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse pulvinar rhoncus purus, vel posuere massa malesuada sit amet. Duis imperdiet volutpat risus eu mollis. Mauris vel placerat dui. Suspendisse nec nibh et ex egestas congue et id nulla.";
-    const IMG = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/303px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg";
-    this.post = {
-      id: this.postId,
-      title: "Mon titre de post",
-      img: IMG,
-      text: LOREM_IPSUM,
-      comments: [
-        {
-          author: "John Doe",
-          text: LOREM_IPSUM
-        },
-        {
-          author: "John Doe",
-          text: LOREM_IPSUM
-        },
-        {
-          author: "John Doe",
-          text: LOREM_IPSUM
-        }
-      ]
-    };
   }
 
   sendComment(): void {
     window.alert(this.comment);
+  }
+
+  deleteComment(id) {
+    this.backend.deleteComment(id).subscribe(results => {
+      window.alert("Commentaire supprimé avec succès!");
+      this.ngOnInit();
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  deletePost() {
+    this.backend.deletePost(this.postId).subscribe(results => {
+      this.router.navigate(["/"]);
+    });
   }
 
 }

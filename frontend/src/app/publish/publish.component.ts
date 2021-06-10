@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BackendService } from '../backend.service';
 import { UserService } from '../user.service';
 
@@ -11,26 +12,30 @@ export class PublishComponent implements OnInit {
 
   name : any;
   text : any;
-  file : any;
+  data : any;
 
-  constructor(private backend: BackendService, private user: UserService) { }
+  constructor(private backend: BackendService, private user: UserService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  onFileSelect(event) {
+    if(event.target.files.length != 0) {
+      let file = event.target.files[0];
+      let reader = new FileReader();
+      reader.onload = () => {
+        this.data = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   send(): void {
-    window.alert("Nom: " + this.name + "\nTexte: " + this.text + "\nFichier: " + this.file);
-    /*let fileInput = document.getElementById("fileInput");
-    let file = fileInput.files[0];
-    let reader = new FileReader();
-    reader.
-    return;
-    this.backend.addPost(this.user.getToken(), this.name, this.text, this.file).subscribe((result) => {
-      console.log(result);
+    this.backend.createPost(this.name, this.text, this.data).subscribe(results => {
+      this.router.navigate(["/" + results.id]);
     }, error => {
       console.log(error);
-      document.getElementById("test").innerHTML = error.error;
-    })*/
+    })
   }
 
 }

@@ -1,26 +1,28 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-
-module.exports = (request, response, next) => {
+exports.userCheck = (request, response, next) => {
     try {
-        const token = request.headers.authorization.split('')[1];
-        const decodeToken = jwt.verify(token, 'shhhhh');
-        db.query('SELECT * FROM users WHERE id = ?', [decodeToken.id], (error, results, fields) => {
+        const token = request.headers.authorization;
+        if(token == null || token == undefined) {
+            response.sendStatus(401);
+            return;
+        }
+
+        const decodedToken = jwt.verify(token, 'shhhhh');
+        db.query('SELECT * FROM user WHERE id = ?', [decodedToken.id], (error, results, fields) => {
             if (error) {
-                response.statusCode = 403;
                 response.send(error);
                 return;
             }
 
-            if (!results[0]) { //s'il n'y en a pas de résultat alors réponse "PAS DE RESULTAT"
-                response.statusCode = 403;
-                response.send({ message: "PAS DE RESULTAT ! " });
+            if (!results[0]) { // S'il n'y en a pas de résultat alors réponse "PAS DE RESULTAT"
+                response.statusCode = 401;
+                response.send({ message: "Nonexistant user" });
                 return;
             }
-            request.token = token;
-            //on passe à la requête principale
-            next()
+            request.userId = decodedToken.id;
+            next() // On passe à la requête principale
         });
 
     } catch (error) {
@@ -28,3 +30,24 @@ module.exports = (request, response, next) => {
         response.status(401).json({ error: error | 'requête non authentifié !' });
     }
 };
+
+exports.moderatorCheck = (request, response, next) => {
+    let id = request.userId;
+    db.query("SELECT moderator FROM user WHERE id=?", [id], (error, results, fields) => {
+        if(error) {
+            response.send(error);
+            return;
+        }
+        if (!results[0]) { // S'il n'y en a pas de résultat alors réponse "PAS DE RESULTAT"
+            response.statusCode = 401;
+            response.send({ message: "Nonexistant user" });
+            return;
+        }
+
+        if(results[0].moderator == false) {
+            response.sendStatus(403);
+            return;
+        }
+        next();
+    });
+}

@@ -9,20 +9,21 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require("./middleware/multer-config.js");
 const fs = require("fs");
-
+const path = require("path")
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 min
-    max: 100, // limite à 100 requêtes/15min  par windowMs
+    max: 1000, // limite à 100 requêtes/15min  par windowMs
     message: 'too many requests sent by this ip, please try again in 15 minutes'
 });
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({limit: "512mb"}));
 app.use(bodyParser.json());// Pour pouvoir récupérer les requêtes au format JSON
 app.use(bodyParser.urlencoded({ extended: true }));// Pour pouvoir traiter les informations de formulaire
 app.use(helmet());// Pour renforcer la sécurité de l'app
 app.use(limiter);
+app.use("/images/", express.static(path.join(__dirname, 'images')));
 
 // LES ROUTES
 app.use('/', rtUser);
